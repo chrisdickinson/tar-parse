@@ -342,13 +342,6 @@ test("parser test", function (t) {
 
   fs.createReadStream(file)
     .pipe(parser)
-    .on('data', function(entry) {
-      var p = entry.path
-      entry
-        .pipe(through(function(data) { this.queue('GOT <'+data+'>') }))
-        .once('end', function() { console.log('<ALL DONE "'+p+'">') })
-        .pipe(process.stdout)
-    })
     .on("*", function (ev, entry) {
       var wanted = expect[index]
       if (!wanted) {
