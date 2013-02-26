@@ -1,0 +1,35 @@
+{
+  "name": "tar-parse",
+  "version": "0.0.0",
+  "description": "streaming tar parser",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "block-stream": "~0.0.6",
+    "duplex": "~1.0.0",
+    "through": "~2.2.0"
+  },
+  "devDependencies": {
+    "mkdirp": "~0.3.5",
+    "rimraf": "~2.1.4",
+    "tape": "~0.2.2"
+  },
+  "scripts": {
+    "test": "node test/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/chrisdickinson/tar-parse.git"
+  },
+  "keywords": [
+    "tarball",
+    "tar",
+    "parse",
+    "stream"
+  ],
+  "author": "Chris Dickinson <chris@neversaw.us>",
+  "license": "MIT",
+  "gitHead": "eebd619835f88400fd6577fec10899f3d597f456"
+}
