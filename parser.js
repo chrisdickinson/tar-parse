@@ -57,7 +57,7 @@ function parser(global) {
     } else {
       ended = eof_started = false
       entry = start_entry(chunk)
-      return !entry.paused
+      return entry ? !entry.paused : true
     }
   }
 
@@ -173,18 +173,19 @@ function parser(global) {
     stream.emit('*', ev, _entry)
 
     if(_entry.props.size === 0) {
-      if(_entry.paused) {
-        _entry.once('drain', function() {
-          _entry.end()
-          entry = null
-        })
-      } else { 
+      if(!_entry.paused) {
         _entry.end()
-        _entry = null
-      } 
+        return null
+      }
+      _entry.once('drain', function() {
+        _entry.end()
+        entry = null
+      })
     }
 
-    _entry.on('drain', emit(stream, 'drain'))
+    if(_entry) {
+      _entry.on('drain', emit(stream, 'drain'))
+    }
     return _entry
 
     function _end() {
