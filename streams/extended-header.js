@@ -2,6 +2,7 @@ module.exports = extended_header
 
 var entry = require('./entry')
   , header = require('../header')
+  , Buffer = require('buffer').Buffer
   , numeric = header.numeric
 
 var _ = 0
