@@ -1,6 +1,6 @@
 {
   "name": "tar-parse",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "streaming tar parser",
   "main": "index.js",
   "directories": {
