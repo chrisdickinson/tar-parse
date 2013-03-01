@@ -1,5 +1,5 @@
 var duplex = require('duplex')
-  , by_512 = require('./blocks')
+  , chunks = require('chunk-stream')
   , parser = require('./parser')
   , EE = require('events').EventEmitter
 
@@ -12,7 +12,7 @@ function parse() {
   var _global = {}
     , stream = duplex()
     , parse = parser(_global)
-    , blocks = by_512()
+    , blocks = chunks(512)
     , eof_started = false
     , ended = false
     , entry = null
