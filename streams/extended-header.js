@@ -2,7 +2,7 @@ module.exports = extended_header
 
 var entry = require('./entry')
   , header = require('../header')
-  , Buffer = require('buffer').Buffer
+  , utf8 = require('to-utf8')
   , numeric = header.numeric
 
 var _ = 0
@@ -76,7 +76,7 @@ function extended_header(header, extended, global) {
   function parse_size(c) {
     if(c === space) {
       state = KEY
-      size = parseInt(new Buffer(sizebuf).toString('utf8'), 10)
+      size = parseInt(utf8(sizebuf), 10)
       sizebuf.length = 0
       return
     }
@@ -103,10 +103,10 @@ function extended_header(header, extended, global) {
         stream.emit('error', 'expected \\n at end of field')
         return
       }
-      var keyval = new Buffer(key).toString('utf8')
+      var keyval = utf8(key)
         , value = numeric[keyval] ?
-          parseFloat(new Buffer(val).toString('utf8')) :
-          new Buffer(val).toString('utf8').replace(/\0+$/, '')
+          parseFloat(utf8(val)) :
+          utf8(val).replace(/\0+$/, '')
 
       keyval = trans[keyval] ? trans[keyval] : keyval
       stream.fields[keyval] = value
