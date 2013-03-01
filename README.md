@@ -4,6 +4,9 @@ just the parsing part of [node-tar](http://npm.im/tar) lifted out and reworked
 using [dominictarr's duplex](http://npm.im/duplex) library. primary goal is to
 get `tar` working in the browser.
 
+[![Build Status](https://travis-ci.org/chrisdickinson/tar-parse.png)](https://travis-ci.org/chrisdickinson/tar-parse)
+[![browser support](http://ci.testling.com/chrisdickinson/tar-parse.png)](http://ci.testling.com/chrisdickinson/tar-parse)
+
 ```javascript
 var parse = require('tar-parse')
   , mkdirp = require('mkdirp')
