@@ -48,7 +48,7 @@ function parser(global) {
   function write_non_entry(chunk) {
     var zero = true
     for(var i = 0; i < 512 && zero; ++i) {
-      zero = chunk[i] === 0
+      zero = (chunk[i] === undefined ? chunk.get(i) : chunk[i]) === 0
     }
 
     if(zero) {

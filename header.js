@@ -14,6 +14,7 @@ var f = 0
   , header_size = 512
   , block_size = 512
   , field_size = []
+  , utf8 = require('to-utf8')
 
 field_size[path] = 100
 field_size[mode] = 8
@@ -161,19 +162,39 @@ header.types = types
 header.fields = fields
 header.numeric = numeric
 
+var slice = buffer_slice
+
+function buffer_slice(buf, start, end) {
+  return buf.slice(start, end)
+}
+
+function uint8_slice(buf, start, end) {
+  return buf.subarray(start, end)
+}
+
 function header(block) {
   var should_return = false
     , prefix
+    , uint8
     , field
     , out
     , val
+
+  if(block[0] === undefined) {
+    uint8 = new Uint8Array(512)
+    for(var i = 0, len = block.length; i < len; ++i) {
+      uint8[i] = block.get(i)
+    }
+    block = uint8
+    slice = uint8_slice
+  }
 
   out = {cksum_valid: checksum(block)}
 
   prefix = null
   for(var f = 0; fields[f] !== null; ++f) {
     field = fields[f]
-    val = block.slice(field_offs[f], field_ends[f])
+    val = slice(block, field_offs[f], field_ends[f])
     switch(field) {
       case 'ustar': parse_ustar(); break
       case 'prefix': parse_prefix(); break
@@ -192,14 +213,14 @@ function header(block) {
   return out
 
   function parse_ustar() {
-    var str = val.toString()
+    var str = utf8(val)
     out.ustar = str === 'ustar\0' ? str : false
     should_return = !out.ustar
   }
 
   function parse_prefix() {
-    var atime = parse_numeric(val.slice(131, 131 + 12))
-      , ctime = parse_numeric(val.slice(131 + 12, 131 + 12 + 12))
+    var atime = parse_numeric(slice(val, 131, 131 + 12))
+      , ctime = parse_numeric(slice(val, 131 + 12, 131 + 12 + 12))
 
     if(val[130] === 0 || val[130] === space &&
        atime !== null && ctime !== null &&
@@ -207,15 +228,15 @@ function header(block) {
        val[131 + 12 + 12] === space) {
       out.atime = atime
       out.ctime = ctime
-      val = val.slice(0, 130)      
+      val = slice(val, 0, 130)      
     }
-    prefix = val.toString('utf8').replace(/\0+$/, '')
+    prefix = utf8(val).replace(/\0+$/, '')
   }
 
   function null_or_number() {
     out[field] = numeric[field] ?
         parse_numeric(val) :
-        val.toString('utf8').replace(/\0+$/, '')
+        utf8(val).replace(/\0+$/, '')
   }
 }
 
@@ -241,10 +262,9 @@ function calcsum(block) {
 
 function checksum(block) {
   var sum = calcsum(block)
-    , cksum = block.slice(field_offs[fields.cksum], field_ends[fields.cksum])
+    , cksum = slice(block, field_offs[fields.cksum], field_ends[fields.cksum])
   
   cksum = parse_numeric(cksum)
-
   return cksum === sum
 }
 
@@ -287,7 +307,7 @@ function parse_numeric(field) {
     return parse256(field)
   }
 
-  var str = field.toString('utf8').split('\0')[0]
+  var str = utf8(field).split('\0')[0]
     , res
 
   str = str.replace(/^\s+/g, '').replace(/\s+$/g, '')

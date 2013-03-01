@@ -60,11 +60,12 @@ function extended_header(header, extended, global) {
 
   function ondata(buf) {
     for(idx = 0, len = buf.length; idx < len; ++field_pos, ++idx) {
+      var c = buf[idx] === undefined ? buf.get(idx) : buf[idx]
       switch(state) {
         case ERR: break
-        case SIZE: parse_size(buf[idx]); break
-        case KEY: parse_key(buf[idx]); break
-        case VAL: parse_val(buf[idx]); break
+        case SIZE: parse_size(c); break
+        case KEY: parse_key(c); break
+        case VAL: parse_val(c); break
       }
     }
   }
