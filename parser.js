@@ -181,6 +181,11 @@ function parser(global) {
         _entry.end()
         entry = null
       })
+    } else {
+      _entry.pause()
+      process.nextTick(function() {
+        _entry.resume()
+      })
     }
 
     if(_entry) {
