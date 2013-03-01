@@ -12,6 +12,7 @@ has = has.call.bind(has)
 function entry(header, extended, global) {
   var stream = through(write)
     , remaining
+    , slice
 
   stream.meta = false
   stream.props = {}
@@ -30,8 +31,16 @@ function entry(header, extended, global) {
   return stream
 
   function write(buf) {
+    if(!slice) {
+      if(buf.slice) {
+        slice = function(b, s, e) { return b.slice(s, e) } 
+      } else {
+        slice = function(b, s, e) { return b.subarray(s, e) }
+      }
+    }
+
     if(buf.length > remaining) {
-      buf = buf.slice(0, remaining)
+      buf = slice(buf, 0, remaining)
     }
 
     remaining -= buf.length
